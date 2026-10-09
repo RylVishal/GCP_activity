@@ -1,0 +1,142 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: asia-south2-docker.pkg.dev/devops-sre-lab-510208/app-images/frontend:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9000
+          env:
+            - name: PINGER_BASE_URL
+              value: "http://pinger-v1-service:3000"
+            - name: DETAILS_BASE_URL
+              value: "http://details-service:4000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: frontend
+  ports:
+    - port: 9000
+      targetPort: 9000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: details
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: details
+  template:
+    metadata:
+      labels:
+        app: details
+    spec:
+      containers:
+        - name: details
+          image: asia-south2-docker.pkg.dev/devops-sre-lab-510208/app-images/details:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: details-service
+spec:
+  type: ClusterIP
+  selector:
+    app: details
+  ports:
+    - port: 4000
+      targetPort: 4000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pinger-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pinger
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: pinger
+        version: v1
+    spec:
+      containers:
+        - name: pinger
+          image: asia-south2-docker.pkg.dev/devops-sre-lab-510208/app-images/pinger:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinger-v1-service
+spec:
+  type: ClusterIP
+  selector:
+    app: pinger
+    version: v1
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pinger-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pinger
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: pinger
+        version: v2
+    spec:
+      containers:
+        - name: pinger
+          image: asia-south2-docker.pkg.dev/devops-sre-lab-510208/app-images/pinger:v2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinger-v2-service
+spec:
+  type: ClusterIP
+  selector:
+    app: pinger
+    version: v2
+  ports:
+    - port: 3000
+      targetPort: 3000
