@@ -1,0 +1,64 @@
+steps:
+  # Build frontend
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$SHORT_SHA
+      - ./app/frontend
+
+  # Build details service
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$SHORT_SHA
+      - ./app/details
+
+  # Build Pinger v1
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v1
+      - ./app/pinger/v1
+
+  # Build Pinger v2
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v2
+      - ./app/pinger/v2
+
+  # Push all four images
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$SHORT_SHA
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$SHORT_SHA
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v1
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v2
+
+images:
+  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$SHORT_SHA
+  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$SHORT_SHA
+  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v1
+  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v2
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1200s
