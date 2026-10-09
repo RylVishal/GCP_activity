@@ -4,7 +4,7 @@ steps:
     args:
       - build
       - -t
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$SHORT_SHA
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$_TAG
       - ./app/frontend
 
   # Build details service
@@ -12,7 +12,7 @@ steps:
     args:
       - build
       - -t
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$SHORT_SHA
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$_TAG
       - ./app/details
 
   # Build Pinger v1
@@ -20,7 +20,7 @@ steps:
     args:
       - build
       - -t
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v1
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$_TAG-v1
       - ./app/pinger/v1
 
   # Build Pinger v2
@@ -28,35 +28,35 @@ steps:
     args:
       - build
       - -t
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v2
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$_TAG-v2
       - ./app/pinger/v2
 
   # Push all four images
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$SHORT_SHA
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$_TAG
 
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$SHORT_SHA
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$_TAG
 
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v1
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$_TAG-v1
 
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v2
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$_TAG-v2
 
 images:
-  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$SHORT_SHA
-  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$SHORT_SHA
-  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v1
-  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v2
+  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$_TAG
+  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$_TAG
+  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$_TAG-v1
+  - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$_TAG-v2
 
 options:
   logging: CLOUD_LOGGING_ONLY
