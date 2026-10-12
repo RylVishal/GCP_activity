@@ -59,7 +59,7 @@ steps:
       - deploy
       - releases
       - create
-      - pinger-$SHORT_SHA
+      - pinger-$SHORT_SHA-$BUILD_ID
       - --delivery-pipeline=pinger-pipeline
       - --region=asia-south1
       - --project=$PROJECT_ID
