@@ -7,7 +7,7 @@ steps:
       - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$_TAG
       - ./app/frontend
 
-  # Build details service
+  # Build details
   - name: gcr.io/cloud-builders/docker
     args:
       - build
@@ -31,7 +31,7 @@ steps:
       - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$_TAG-v2
       - ./app/pinger/v2
 
-  # Push all four images
+  # Push images
   - name: gcr.io/cloud-builders/docker
     args:
       - push
@@ -51,6 +51,20 @@ steps:
     args:
       - push
       - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$_TAG-v2
+
+  # Create a Cloud Deploy release after all image pushes succeed
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - deploy
+      - releases
+      - create
+      - pinger-$_TAG
+      - --delivery-pipeline=pinger-pipeline
+      - --region=asia-south1
+      - --project=$PROJECT_ID
+      - --source=.
+      - --images=frontend=asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$_TAG,details=asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$_TAG,pinger-v1=asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$_TAG-v1,pinger-v2=asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$_TAG-v2
 
 images:
   - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$_TAG
