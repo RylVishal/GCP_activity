@@ -1,0 +1,9 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: pinger
+manifests:
+  rawYaml:
+    - k8s/configs/pinger-gke.yaml
+deploy:
+  kubectl: {}

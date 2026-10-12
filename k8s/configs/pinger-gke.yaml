@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: asia-south2-docker.pkg.dev/devops-sre-lab-510208/app-images/frontend:v1
+          image: frontend
           imagePullPolicy: Always
           ports:
             - containerPort: 9000
@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
         - name: details
-          image: asia-south2-docker.pkg.dev/devops-sre-lab-510208/app-images/details:v1
+          image: details
           imagePullPolicy: Always
           ports:
             - containerPort: 4000
@@ -87,7 +87,7 @@ spec:
     spec:
       containers:
         - name: pinger
-          image: asia-south2-docker.pkg.dev/devops-sre-lab-510208/app-images/pinger:v1
+          image: pinger-v1
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
@@ -123,7 +123,7 @@ spec:
     spec:
       containers:
         - name: pinger
-          image: asia-south2-docker.pkg.dev/devops-sre-lab-510208/app-images/pinger:v2
+          image: pinger-v2
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

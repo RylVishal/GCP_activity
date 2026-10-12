@@ -1,0 +1,16 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: pinger-pipeline
+description: Pinger application delivery pipeline
+serialPipeline:
+  stages:
+    - targetId: pinger-gke
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: pinger-gke
+description: Existing Pinger GKE cluster
+gke:
+  cluster: projects/devops-sre-lab-510208/locations/asia-south1/clusters/pinger-cluster
