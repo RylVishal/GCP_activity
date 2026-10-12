@@ -1,3 +1,4 @@
+
 steps:
   # Build frontend
   - name: gcr.io/cloud-builders/docker
@@ -31,41 +32,50 @@ steps:
       - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v2
       - ./app/pinger/v2
 
-  # Push images
+  # Push frontend
   - name: gcr.io/cloud-builders/docker
     args:
       - push
       - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$SHORT_SHA
 
+  # Push details
   - name: gcr.io/cloud-builders/docker
     args:
       - push
       - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$SHORT_SHA
 
+  # Push Pinger v1
   - name: gcr.io/cloud-builders/docker
     args:
       - push
       - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v1
 
+  # Push Pinger v2
   - name: gcr.io/cloud-builders/docker
     args:
       - push
       - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v2
 
-  # Create a Cloud Deploy release after all image pushes succeed
+  # Create Cloud Deploy release
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: gcloud
+    entrypoint: bash
+    env:
+      - PROJECT_ID=$PROJECT_ID
+      - BUILD_ID=$BUILD_ID
+      - SHORT_SHA=$SHORT_SHA
     args:
-      - deploy
-      - releases
-      - create
-      - pinger-$SHORT_SHA-$BUILD_ID
-      - --delivery-pipeline=pinger-pipeline
-      - --region=asia-south1
-      - --project=$PROJECT_ID
-      - --source=.
-      - --images=frontend=asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$SHORT_SHA,details=asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$SHORT_SHA,pinger-v1=asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v1,pinger-v2=asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/pinger:$SHORT_SHA-v2
+      - -ceu
+      - |
+        RELEASE_ID="pinger-$${SHORT_SHA}-$$(printf '%s' "$${BUILD_ID}" | cut -c1-8)"
 
+        gcloud deploy releases create "$${RELEASE_ID}" \
+          --delivery-pipeline=pinger-pipeline \
+          --region=asia-south1 \
+          --project="$${PROJECT_ID}" \
+          --source=. \
+          --images="frontend=asia-south2-docker.pkg.dev/$${PROJECT_ID}/app-images/frontend:$${SHORT_SHA},details=asia-south2-docker.pkg.dev/$${PROJECT_ID}/app-images/details:$${SHORT_SHA},pinger-v1=asia-south2-docker.pkg.dev/$${PROJECT_ID}/app-images/pinger:$${SHORT_SHA}-v1,pinger-v2=asia-south2-docker.pkg.dev/$${PROJECT_ID}/app-images/pinger:$${SHORT_SHA}-v2"
+
+# Images produced by this build
 images:
   - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/frontend:$SHORT_SHA
   - asia-south2-docker.pkg.dev/$PROJECT_ID/app-images/details:$SHORT_SHA
